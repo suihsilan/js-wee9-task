@@ -14,12 +14,12 @@ let order = [];
 init();
 //init初始化
 function init() {
-  getProcudtList();
+  getProductList();
   getCartList();
 }
 
 //取的產品資料
-function getProcudtList() {
+function getProductList() {
   axios
     .get(
       `https://livejs-api.hexschool.io/api/livejs/v1/customer/${api_path}/products`
@@ -33,13 +33,17 @@ function getProcudtList() {
         str += combinationHtmlStr(product);
       });
       productWrap.innerHTML = str;
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
     });
 }
 
 //篩選功能
 productSelect.addEventListener("change", (e) => {
   if (e.target.value === "全部") {
-    getProcudtList();
+    getProductList();
     return;
   }
 
@@ -59,13 +63,23 @@ function combinationHtmlStr(product) {
         <li class="productCard">
             <h4 class="productType">新品</h4>
             <img src="${product.images}" alt="">
-            <a href="#" data-id="${product.id}" class="addCardBtn">加入購物車</a>
+            <a href="#" data-id="${
+              product.id
+            }" class="addCardBtn">加入購物車</a>
             <h3>${product.title}</h3>
-            <del class="originPrice">NT$${product.origin_price}</del>
-            <p class="nowPrice">NT$${product.price}</p>
+            <del class="originPrice">NT$${new Intl.NumberFormat("zh-TW").format(
+              product.origin_price
+            )}</del>
+            <p class="nowPrice">NT$${new Intl.NumberFormat("zh-TW").format(
+              product.price
+            )}</p>
           </li>
       `;
 }
+
+//new Intl.NumberFormat("zh-TW").format(total)
+//new Intl.NumberFormat('zh-TW').format(product.price)
+//new Intl.NumberFormat('zh-TW').format(product.origin_price)
 
 //加入購物車監聽
 productWrap.addEventListener("click", (e) => {
@@ -109,6 +123,10 @@ productWrap.addEventListener("click", (e) => {
     .then((res) => {
       alert("加入購物車");
       getCartList();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
     });
 });
 
@@ -134,9 +152,13 @@ function getCartList() {
               <p>${item.product.title}</p>
             </div>
           </td>
-          <td>NT$${item.product.price}</td>
+          <td>NT$${new Intl.NumberFormat("zh-TW").format(
+            item.product.price
+          )}</td>
           <td>${item.quantity}</td>
-          <td>NT$${item.product.price * item.quantity}</td>
+          <td>NT$${new Intl.NumberFormat("zh-TW").format(
+            item.product.price * item.quantity
+          )}</td>
           <td class="discardBtn">
             <a href="#" data-id="${
               item.id
@@ -148,7 +170,13 @@ function getCartList() {
       `;
       });
       shoppingCart.innerHTML = str;
-      totalAmount.textContent = totalPaid;
+      totalAmount.textContent = new Intl.NumberFormat("zh-TW").format(
+        totalPaid
+      );
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
     });
 }
 
@@ -164,6 +192,10 @@ shoppingCart.addEventListener("click", (e) => {
     .then((res) => {
       alert("刪除單筆購物車成功");
       getCartList();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
     });
 });
 
@@ -177,6 +209,10 @@ discardAllBtn.addEventListener("click", (e) => {
     .then((res) => {
       alert("已刪除全部產品");
       getCartList();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
     });
 });
 
@@ -220,5 +256,9 @@ orderInfoBtn.addEventListener("click", (e) => {
       console.log(order);
       document.querySelector(".orderInfo-form").reset();
       getCartList();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
     });
 });
